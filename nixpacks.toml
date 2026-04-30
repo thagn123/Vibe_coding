@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ["nodePackages.npm", "nodejs_20"]
+
+[phases.install]
+dependsOn = ["setup"]
+cmds = ["npm install"]
+
+[phases.build]
+dependsOn = ["install"]
+cmds = ["npm run build:backend"]
+
+[start]
+cmd = "npm run start:server"

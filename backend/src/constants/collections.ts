@@ -1,0 +1,15 @@
+export const COLLECTIONS = {
+  USERS: 'users',
+  USER_PROFILES: 'user_profiles',
+  BUG_CHALLENGES: 'bug_challenges',
+  BUG_HINTS: 'bug_hints',
+  BUG_TEST_CASES: 'bug_test_cases',
+  BUG_SUBMISSIONS: 'bug_submissions',
+  PROMPT_TEMPLATES: 'prompt_templates',
+  PROMPT_HISTORY: 'prompt_history',
+  AI_CONVERSATIONS: 'ai_conversations',
+  LEARNING_PROGRESS: 'learning_progress',
+  NOTIFICATIONS: 'notifications',
+  ACHIEVEMENTS: 'achievements',
+  FAQ: 'faq',
+} as const;

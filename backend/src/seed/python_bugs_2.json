@@ -1,0 +1,357 @@
+[
+  {
+    "id": "bug_py_011",
+    "title": "Sticky Default",
+    "description": "This function adds an item to a cart. Oddly, when called multiple times without passing a cart, items from previous calls reappear.",
+    "difficulty": "Medium",
+    "category": "functions",
+    "language": "Python",
+    "tags": ["mutable", "default-arguments"],
+    "xp": 20,
+    "starterCode": "def add_to_cart(item, cart=[]):\n    cart.append(item)\n    return cart",
+    "expectedBehavior": "When no cart is provided, it should create a fresh empty cart and add the item.",
+    "hints": [
+      "In Python, default arguments are evaluated only once when the function is defined.",
+      "Because a list is mutable, the same list object is reused every time the function is called without a cart argument.",
+      "Set the default argument to None, and inside the function, create a new list if it is None."
+    ],
+    "testCases": [
+      {
+        "input": ["apple", []],
+        "expectedOutput": ["apple"],
+        "hidden": false
+      },
+      {
+        "input": ["banana"],
+        "expectedOutput": ["banana"],
+        "hidden": false
+      },
+      {
+        "input": ["orange"],
+        "expectedOutput": ["orange"],
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "add_to_cart"
+  },
+  {
+    "id": "bug_py_012",
+    "title": "Lazy Lambdas",
+    "description": "This function creates a list of 3 multiplier functions. However, all three functions end up multiplying by 2 instead of 0, 1, and 2.",
+    "difficulty": "Hard",
+    "category": "functions",
+    "language": "Python",
+    "tags": ["closures", "lambda", "scope"],
+    "xp": 40,
+    "starterCode": "def create_multipliers():\n    funcs = []\n    for i in range(3):\n        funcs.append(lambda x: x * i)\n    return funcs",
+    "expectedBehavior": "The returned functions should multiply their input by 0, 1, and 2 respectively.",
+    "hints": [
+      "Lambdas in Python use late binding; they look up the value of variables at the time they are called, not when they are created.",
+      "By the time the lambdas are called, the loop has finished and 'i' is equal to 2.",
+      "Force early binding by using a default argument in the lambda, like 'lambda x, i=i: x * i'."
+    ],
+    "testCases": [
+      {
+        "input": ["[f(10) for f in create_multipliers()]"],
+        "expectedOutput": [0, 10, 20],
+        "hidden": false
+      },
+      {
+        "input": ["[f(5) for f in create_multipliers()]"],
+        "expectedOutput": [0, 5, 10],
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "create_multipliers"
+  },
+  {
+    "id": "bug_py_013",
+    "title": "Off by One",
+    "description": "This code iterates over a list to create a formatted string. It crashes with an IndexError on the last element.",
+    "difficulty": "Easy",
+    "category": "arrays",
+    "language": "Python",
+    "tags": ["index", "out-of-range", "lists"],
+    "xp": 10,
+    "starterCode": "def format_items(arr):\n    result = []\n    for i in range(1, len(arr) + 1):\n        result.append(str(arr[i]))\n    return ', '.join(result)",
+    "expectedBehavior": "It should successfully combine all items in the array.",
+    "hints": [
+      "Python lists are zero-indexed, meaning the first element is at index 0.",
+      "The highest valid index in a list is len(arr) - 1.",
+      "Adjust the range to start at 0 and end at len(arr)."
+    ],
+    "testCases": [
+      {
+        "input": [[10, 20, 30]],
+        "expectedOutput": "10, 20, 30",
+        "hidden": false
+      },
+      {
+        "input": [["a", "b"]],
+        "expectedOutput": "a, b",
+        "hidden": false
+      },
+      {
+        "input": [[99]],
+        "expectedOutput": "99",
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "format_items"
+  },
+  {
+    "id": "bug_py_014",
+    "title": "Lost the Sort",
+    "description": "This function attempts to sort an array of numbers and return the sorted array. Instead, it returns None.",
+    "difficulty": "Easy",
+    "category": "arrays",
+    "language": "Python",
+    "tags": ["methods", "in-place", "none"],
+    "xp": 10,
+    "starterCode": "def get_sorted(arr):\n    return arr.sort()",
+    "expectedBehavior": "Return the sorted version of the array.",
+    "hints": [
+      "In Python, list methods that modify the list in-place (like .sort() or .append()) generally return None.",
+      "To return a sorted copy of a list, there is a built-in function you can use instead of the method.",
+      "Use the built-in sorted(arr) function."
+    ],
+    "testCases": [
+      {
+        "input": [[3, 1, 2]],
+        "expectedOutput": [1, 2, 3],
+        "hidden": false
+      },
+      {
+        "input": [[5, 5, 1]],
+        "expectedOutput": [1, 5, 5],
+        "hidden": false
+      },
+      {
+        "input": [[9, 8, 7, 6]],
+        "expectedOutput": [6, 7, 8, 9],
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "get_sorted"
+  },
+  {
+    "id": "bug_py_015",
+    "title": "Double Append Illusion",
+    "description": "This function takes a list, appends 'x' for every existing item in the list, but it gets stuck in an infinite loop allocating memory until it crashes.",
+    "difficulty": "Medium",
+    "category": "arrays",
+    "language": "Python",
+    "tags": ["iteration", "mutation", "infinite-loop"],
+    "xp": 20,
+    "starterCode": "def double_length(arr):\n    for item in arr:\n        arr.append('x')\n    return arr",
+    "expectedBehavior": "If the list has 3 items, it should iterate exactly 3 times and append 'x' 3 times.",
+    "hints": [
+      "You are iterating over a list while simultaneously adding new items to the end of it.",
+      "Because the list keeps growing, the loop never reaches the 'end'.",
+      "Try iterating over a fixed copy of the list, or using the length of the list in a range loop."
+    ],
+    "testCases": [
+      {
+        "input": [[1, 2]],
+        "expectedOutput": [1, 2, "x", "x"],
+        "hidden": false
+      },
+      {
+        "input": [[]],
+        "expectedOutput": [],
+        "hidden": false
+      },
+      {
+        "input": [[1, 2, 3, 4]],
+        "expectedOutput": [1, 2, 3, 4, "x", "x", "x", "x"],
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "double_length"
+  },
+  {
+    "id": "bug_py_016",
+    "title": "Immutable Letters",
+    "description": "This function attempts to capitalize the first letter of a word by directly assigning a capital letter to index 0, causing a TypeError.",
+    "difficulty": "Easy",
+    "category": "strings",
+    "language": "Python",
+    "tags": ["immutability", "assignment"],
+    "xp": 10,
+    "starterCode": "def capitalize_first(word):\n    if not word:\n        return word\n    word[0] = word[0].upper()\n    return word",
+    "expectedBehavior": "Return a new string with the first letter capitalized.",
+    "hints": [
+      "In Python, strings are immutable. You cannot change a specific character by index.",
+      "You must create a completely new string.",
+      "Try concatenating the upper-cased first letter with the rest of the string using slicing."
+    ],
+    "testCases": [
+      {
+        "input": ["hello"],
+        "expectedOutput": "Hello",
+        "hidden": false
+      },
+      {
+        "input": ["world"],
+        "expectedOutput": "World",
+        "hidden": false
+      },
+      {
+        "input": ["a"],
+        "expectedOutput": "A",
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "capitalize_first"
+  },
+  {
+    "id": "bug_py_017",
+    "title": "Forgotten Replace",
+    "description": "This function is supposed to replace all spaces with underscores, but the original string is returned unchanged.",
+    "difficulty": "Easy",
+    "category": "strings",
+    "language": "Python",
+    "tags": ["methods", "return-value"],
+    "xp": 10,
+    "starterCode": "def snake_case(text):\n    text.replace(' ', '_')\n    return text",
+    "expectedBehavior": "Return the modified string with underscores.",
+    "hints": [
+      "String methods like replace() do not modify the original string in place.",
+      "They return a brand new string.",
+      "You need to assign the result of the replace method back to the variable, or return it directly."
+    ],
+    "testCases": [
+      {
+        "input": ["hello world"],
+        "expectedOutput": "hello_world",
+        "hidden": false
+      },
+      {
+        "input": ["no_spaces"],
+        "expectedOutput": "no_spaces",
+        "hidden": false
+      },
+      {
+        "input": ["a b c"],
+        "expectedOutput": "a_b_c",
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "snake_case"
+  },
+  {
+    "id": "bug_py_018",
+    "title": "Identity Crisis",
+    "description": "This function checks if a string is equal to 'admin'. It works for simple variables but fails mysteriously when the string is constructed dynamically.",
+    "difficulty": "Medium",
+    "category": "strings",
+    "language": "Python",
+    "tags": ["equality", "identity", "is"],
+    "xp": 20,
+    "starterCode": "def is_admin(user_role):\n    if user_role is 'admin':\n        return True\n    return False",
+    "expectedBehavior": "Return True if the value of the string is 'admin'.",
+    "hints": [
+      "The 'is' operator checks for object identity (if they occupy the same memory location).",
+      "Strings constructed at runtime might have the same value but live in different memory locations.",
+      "Use the '==' operator to check for value equality."
+    ],
+    "testCases": [
+      {
+        "input": ["'adm' + 'in'"],
+        "expectedOutput": true,
+        "hidden": false
+      },
+      {
+        "input": ["user"],
+        "expectedOutput": false,
+        "hidden": false
+      },
+      {
+        "input": ["admin"],
+        "expectedOutput": true,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "is_admin"
+  },
+  {
+    "id": "bug_py_019",
+    "title": "Missing Key Crash",
+    "description": "This function checks the 'status' of a user configuration. If 'status' isn't in the dictionary, it crashes with a KeyError.",
+    "difficulty": "Easy",
+    "category": "dictionary",
+    "language": "Python",
+    "tags": ["keys", "keyerror"],
+    "xp": 10,
+    "starterCode": "def is_active(config):\n    if config['status'] == 'active':\n        return True\n    return False",
+    "expectedBehavior": "Return False gracefully if the 'status' key is missing.",
+    "hints": [
+      "Accessing a dictionary key directly using bracket notation raises a KeyError if the key doesn't exist.",
+      "You can check if a key is in the dictionary first using the 'in' keyword.",
+      "Alternatively, use the dictionary .get() method, which returns None if the key is missing."
+    ],
+    "testCases": [
+      {
+        "input": [{"status": "active"}],
+        "expectedOutput": true,
+        "hidden": false
+      },
+      {
+        "input": [{"name": "Bob"}],
+        "expectedOutput": false,
+        "hidden": false
+      },
+      {
+        "input": [{"status": "inactive"}],
+        "expectedOutput": false,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "is_active"
+  },
+  {
+    "id": "bug_py_020",
+    "title": "Changing the Tracks",
+    "description": "This function removes keys with empty string values from a dictionary. It crashes with a RuntimeError: dictionary changed size during iteration.",
+    "difficulty": "Medium",
+    "category": "dictionary",
+    "language": "Python",
+    "tags": ["iteration", "deletion", "mutation"],
+    "xp": 20,
+    "starterCode": "def remove_empty(data):\n    for k, v in data.items():\n        if v == '':\n            del data[k]\n    return data",
+    "expectedBehavior": "Successfully remove empty strings without crashing.",
+    "hints": [
+      "Python strictly forbids changing the size of a dictionary while you are looping through it.",
+      "You need to separate the task of finding the keys from deleting them.",
+      "Try iterating over a list of the keys instead, or build a brand new dictionary."
+    ],
+    "testCases": [
+      {
+        "input": [{"a": "1", "b": ""}],
+        "expectedOutput": {"a": "1"},
+        "hidden": false
+      },
+      {
+        "input": [{"c": "hello"}],
+        "expectedOutput": {"c": "hello"},
+        "hidden": false
+      },
+      {
+        "input": [{"x": "", "y": "", "z": "3"}],
+        "expectedOutput": {"z": "3"},
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "remove_empty"
+  }
+]

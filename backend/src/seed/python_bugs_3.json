@@ -1,0 +1,342 @@
+[
+  {
+    "id": "bug_py_021",
+    "title": "Unhashable Key",
+    "description": "This code tries to group items by using a list of tags as the dictionary key, but it crashes with a TypeError.",
+    "difficulty": "Hard",
+    "category": "dictionary",
+    "language": "Python",
+    "tags": ["hashing", "mutable", "types"],
+    "xp": 40,
+    "starterCode": "def group_by_tags(items):\n    groups = {}\n    for item in items:\n        tags = item['tags']\n        if tags not in groups:\n            groups[tags] = []\n        groups[tags].append(item)\n    return groups",
+    "expectedBehavior": "Group items using their tags. Because lists cannot be used as dict keys, use a tuple instead.",
+    "hints": [
+      "Dictionary keys in Python must be immutable (unhashable types).",
+      "A list can be changed, so Python prevents you from using it as a dictionary key.",
+      "Convert the list of tags into a tuple before using it as a key."
+    ],
+    "testCases": [
+      {
+        "input": [[{"id": 1, "tags": ["a", "b"]}]],
+        "expectedOutput": {"('a', 'b')": [{"id": 1, "tags": ["a", "b"]}]},
+        "hidden": false
+      },
+      {
+        "input": [[]],
+        "expectedOutput": {},
+        "hidden": false
+      },
+      {
+        "input": [[{"tags": ["x"]}, {"tags": ["x"]}]],
+        "expectedOutput": {"('x',)": [{"tags": ["x"]}, {"tags": ["x"]}]},
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "group_by_tags"
+  },
+  {
+    "id": "bug_py_022",
+    "title": "Swallowing Exceptions",
+    "description": "This function is meant to return None if JSON parsing fails. However, it also catches KeyboardInterrupts and SystemExits, making the program impossible to stop normally.",
+    "difficulty": "Easy",
+    "category": "error-handling",
+    "language": "Python",
+    "tags": ["exceptions", "bare-except"],
+    "xp": 10,
+    "starterCode": "import json\n\ndef parse_data(raw):\n    try:\n        return json.loads(raw)\n    except:\n        return None",
+    "expectedBehavior": "Catch only standard runtime exceptions, not system-level exits.",
+    "hints": [
+      "A bare 'except:' catches absolutely everything, including the signal when you press Ctrl+C to stop the program.",
+      "It's a bad practice to swallow all exceptions silently.",
+      "Specify 'except Exception:' to catch normal application errors, or better yet, 'except ValueError:'."
+    ],
+    "testCases": [
+      {
+        "input": ["{\"a\": 1}"],
+        "expectedOutput": {"a": 1},
+        "hidden": false
+      },
+      {
+        "input": ["invalid json"],
+        "expectedOutput": null,
+        "hidden": false
+      },
+      {
+        "input": [""],
+        "expectedOutput": null,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "parse_data"
+  },
+  {
+    "id": "bug_py_023",
+    "title": "Wrong Catch",
+    "description": "This function converts a string to an integer and handles errors. It tries to catch a TypeError, but when passed 'abc', it still crashes.",
+    "difficulty": "Easy",
+    "category": "error-handling",
+    "language": "Python",
+    "tags": ["exceptions", "types"],
+    "xp": 10,
+    "starterCode": "def safe_convert(val):\n    try:\n        return int(val)\n    except TypeError:\n        return 0",
+    "expectedBehavior": "Return 0 when the string cannot be parsed into an integer.",
+    "hints": [
+      "Different operations raise different types of errors.",
+      "Passing a string with text (like 'abc') to int() does not raise a TypeError.",
+      "It raises a ValueError. Change the exception type you are catching."
+    ],
+    "testCases": [
+      {
+        "input": ["123"],
+        "expectedOutput": 123,
+        "hidden": false
+      },
+      {
+        "input": ["abc"],
+        "expectedOutput": 0,
+        "hidden": false
+      },
+      {
+        "input": ["999"],
+        "expectedOutput": 999,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "safe_convert"
+  },
+  {
+    "id": "bug_py_024",
+    "title": "The Overriding Finally",
+    "description": "This function is supposed to return the result of a risky operation, but it always returns False regardless of success or failure.",
+    "difficulty": "Medium",
+    "category": "error-handling",
+    "language": "Python",
+    "tags": ["finally", "return"],
+    "xp": 20,
+    "starterCode": "def execute_task(success):\n    try:\n        if success:\n            return True\n        raise Exception('Failed')\n    except Exception:\n        pass\n    finally:\n        return False",
+    "expectedBehavior": "Return True if success is True, otherwise return False.",
+    "hints": [
+      "The 'finally' block is always executed before leaving the try-except statement.",
+      "If the finally block contains a return statement, it overrides any return statement executed in the try or except blocks.",
+      "Move 'return False' into the except block, or outside the try-except completely."
+    ],
+    "testCases": [
+      {
+        "input": [true],
+        "expectedOutput": true,
+        "hidden": false
+      },
+      {
+        "input": [false],
+        "expectedOutput": false,
+        "hidden": false
+      },
+      {
+        "input": [true],
+        "expectedOutput": true,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "execute_task"
+  },
+  {
+    "id": "bug_py_025",
+    "title": "Forgotten Await",
+    "description": "This async function tries to fetch user data. It returns a coroutine object instead of the actual data because it forgot to wait for the result.",
+    "difficulty": "Easy",
+    "category": "async",
+    "language": "Python",
+    "tags": ["async", "await", "coroutines"],
+    "xp": 10,
+    "starterCode": "async def mock_db_call():\n    return 'user_data'\n\nasync def get_user():\n    data = mock_db_call()\n    return data",
+    "expectedBehavior": "It should return the actual string 'user_data'.",
+    "hints": [
+      "Calling an async function does not execute it immediately; it returns an awaitable coroutine object.",
+      "To get the actual result, you must pause execution until the coroutine finishes.",
+      "Add the 'await' keyword before calling the async function."
+    ],
+    "testCases": [
+      {
+        "input": [],
+        "expectedOutput": "user_data",
+        "hidden": false
+      },
+      {
+        "input": [],
+        "expectedOutput": "user_data",
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "get_user"
+  },
+  {
+    "id": "bug_py_026",
+    "title": "Blocking the Loop",
+    "description": "This async function delays for 1 second. However, it uses a standard time delay that completely freezes the entire async event loop, blocking all other tasks.",
+    "difficulty": "Easy",
+    "category": "async",
+    "language": "Python",
+    "tags": ["blocking", "sleep"],
+    "xp": 10,
+    "starterCode": "import time\nimport asyncio\n\nasync def delay_action():\n    time.sleep(1)\n    return 'done'",
+    "expectedBehavior": "Use an asynchronous sleep so other tasks can run concurrently.",
+    "hints": [
+      "Standard libraries like 'time' contain synchronous functions that block the current thread entirely.",
+      "In async programming, blocking the thread defeats the purpose.",
+      "Use the 'asyncio' library's non-blocking alternative for sleep."
+    ],
+    "testCases": [
+      {
+        "input": [],
+        "expectedOutput": "done",
+        "hidden": false
+      },
+      {
+        "input": [],
+        "expectedOutput": "done",
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "delay_action"
+  },
+  {
+    "id": "bug_py_027",
+    "title": "Concurrency Chaos",
+    "description": "This simulates a race condition where a counter is updated concurrently. Because operations aren't locked, some updates get overwritten.",
+    "difficulty": "Medium",
+    "category": "async",
+    "language": "Python",
+    "tags": ["race-condition", "state", "shared"],
+    "xp": 20,
+    "starterCode": "import asyncio\n\nclass Counter:\n    def __init__(self):\n        self.val = 0\n    async def increment(self):\n        temp = self.val\n        await asyncio.sleep(0.01)\n        self.val = temp + 1\n\nasync def run_counter():\n    c = Counter()\n    await asyncio.gather(c.increment(), c.increment())\n    return c.val",
+    "expectedBehavior": "The counter should cleanly increment to 2, either by not awaiting in the middle of a transaction or using proper locking.",
+    "hints": [
+      "Both increment tasks read the initial value (0) at the exact same time before yielding control via sleep.",
+      "When they wake up, they both write (0 + 1) back to state, causing an update to be lost.",
+      "Either remove the await in the critical section, or use an asyncio.Lock()."
+    ],
+    "testCases": [
+      {
+        "input": [],
+        "expectedOutput": 2,
+        "hidden": false
+      },
+      {
+        "input": [],
+        "expectedOutput": 2,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "run_counter"
+  },
+  {
+    "id": "bug_py_028",
+    "title": "Strictly True",
+    "description": "This function checks if a configuration setting is enabled. It fails when the setting is a truthy value like 'yes' or 1, instead of exactly True.",
+    "difficulty": "Easy",
+    "category": "logic",
+    "language": "Python",
+    "tags": ["boolean", "truthy", "identity"],
+    "xp": 10,
+    "starterCode": "def is_enabled(config_val):\n    if config_val is True:\n        return 'Enabled'\n    return 'Disabled'",
+    "expectedBehavior": "It should evaluate truthiness, so any non-empty string or non-zero integer counts as enabled.",
+    "hints": [
+      "The 'is' keyword checks for exact object identity. It strictly requires the boolean True.",
+      "In Python, an if-statement inherently checks for truthiness without any operators.",
+      "Simply write 'if config_val:'."
+    ],
+    "testCases": [
+      {
+        "input": [1],
+        "expectedOutput": "Enabled",
+        "hidden": false
+      },
+      {
+        "input": [0],
+        "expectedOutput": "Disabled",
+        "hidden": false
+      },
+      {
+        "input": ["yes"],
+        "expectedOutput": "Enabled",
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "is_enabled"
+  },
+  {
+    "id": "bug_py_029",
+    "title": "Precedence Trap",
+    "description": "This attempts to check if a user is not an admin OR is a moderator. However, the logic evaluates incorrectly due to operator precedence.",
+    "difficulty": "Easy",
+    "category": "logic",
+    "language": "Python",
+    "tags": ["precedence", "boolean", "not"],
+    "xp": 10,
+    "starterCode": "def is_standard_user(role):\n    return not role == 'admin' or role == 'moderator'",
+    "expectedBehavior": "Return True if the user is neither an admin nor a moderator.",
+    "hints": [
+      "The NOT operator applies tightly.",
+      "De Morgan's laws state that NOT (A or B) is equivalent to (NOT A) and (NOT B).",
+      "Use parentheses to group your conditions properly."
+    ],
+    "testCases": [
+      {
+        "input": ["admin"],
+        "expectedOutput": false,
+        "hidden": false
+      },
+      {
+        "input": ["user"],
+        "expectedOutput": true,
+        "hidden": false
+      },
+      {
+        "input": ["moderator"],
+        "expectedOutput": false,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "is_standard_user"
+  },
+  {
+    "id": "bug_py_030",
+    "title": "Short-Circuit Side Effects",
+    "description": "This function validates data and logs the save event. Because 'or' short-circuits, if the validation is True, the logging is entirely skipped.",
+    "difficulty": "Hard",
+    "category": "logic",
+    "language": "Python",
+    "tags": ["short-circuit", "execution", "boolean"],
+    "xp": 40,
+    "starterCode": "def process_data(data, log_flag):\n    def is_valid(): return data != ''\n    def do_log(): \n        nonlocal log_flag\n        log_flag[0] = True\n        return True\n    \n    if is_valid() or do_log():\n        return log_flag[0]\n    return False",
+    "expectedBehavior": "Always evaluate both functions so the logging occurs regardless of validation status.",
+    "hints": [
+      "In Python, 'A or B' stops evaluating immediately if A is True. This is called short-circuiting.",
+      "If you rely on a function having a side-effect (like logging), do not put it in a boolean chain.",
+      "Call the functions separately and store their results in variables before the if-statement."
+    ],
+    "testCases": [
+      {
+        "input": ["valid_data", [false]],
+        "expectedOutput": true,
+        "hidden": false
+      },
+      {
+        "input": ["", [false]],
+        "expectedOutput": true,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "process_data"
+  }
+]

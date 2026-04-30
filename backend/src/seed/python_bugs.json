@@ -1,0 +1,362 @@
+[
+  {
+    "id": "bug_py_001",
+    "title": "Type Mismatch Concatenation",
+    "description": "This function takes an input value and adds 5 to it. However, when a string representing a number is passed, it crashes or gives unexpected results.",
+    "difficulty": "Easy",
+    "category": "basics",
+    "language": "Python",
+    "tags": ["types", "string", "math"],
+    "xp": 10,
+    "starterCode": "def add_five(val):\n    return val + 5",
+    "expectedBehavior": "The function should convert the input to an integer before adding 5.",
+    "hints": [
+      "What is the data type of the input when it comes from an external source or input()?",
+      "In Python, you cannot directly add an integer to a string.",
+      "Try wrapping 'val' with int() before doing the addition."
+    ],
+    "testCases": [
+      {
+        "input": [10],
+        "expectedOutput": 15,
+        "hidden": false
+      },
+      {
+        "input": [0],
+        "expectedOutput": 5,
+        "hidden": false
+      },
+      {
+        "input": ["-5"],
+        "expectedOutput": 0,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "add_five"
+  },
+  {
+    "id": "bug_py_002",
+    "title": "Dangerous Average",
+    "description": "This function calculates the average of a list of numbers. It works fine for normal lists but crashes when the list is empty.",
+    "difficulty": "Easy",
+    "category": "basics",
+    "language": "Python",
+    "tags": ["math", "division", "zero"],
+    "xp": 10,
+    "starterCode": "def calculate_average(numbers):\n    total = sum(numbers)\n    return total / len(numbers)",
+    "expectedBehavior": "Return the average, but return 0 if the list is empty to prevent a ZeroDivisionError.",
+    "hints": [
+      "What is the length of an empty list?",
+      "What happens when you divide a number by zero?",
+      "Add a check to see if the list is empty before dividing."
+    ],
+    "testCases": [
+      {
+        "input": [[10, 20, 30]],
+        "expectedOutput": 20.0,
+        "hidden": false
+      },
+      {
+        "input": [[]],
+        "expectedOutput": 0,
+        "hidden": false
+      },
+      {
+        "input": [[5, 5, 5, 5]],
+        "expectedOutput": 5.0,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "calculate_average"
+  },
+  {
+    "id": "bug_py_003",
+    "title": "Falsy Zero",
+    "description": "This function returns a fallback value if the input score is missing. However, a score of 0 is being replaced by the fallback value.",
+    "difficulty": "Medium",
+    "category": "basics",
+    "language": "Python",
+    "tags": ["truthy", "falsy", "types"],
+    "xp": 20,
+    "starterCode": "def get_score(score, fallback=10):\n    if not score:\n        return fallback\n    return score",
+    "expectedBehavior": "It should only return the fallback if score is null, but a valid score of 0 should be returned as 0.",
+    "hints": [
+      "How does Python evaluate the number 0 in an if statement?",
+      "In Python, 0, empty lists, and null are all 'falsy'.",
+      "Instead of 'if not score:', explicitly check 'if score is null:'."
+    ],
+    "testCases": [
+      {
+        "input": [85, 10],
+        "expectedOutput": 85,
+        "hidden": false
+      },
+      {
+        "input": [0, 10],
+        "expectedOutput": 0,
+        "hidden": false
+      },
+      {
+        "input": [null, 100],
+        "expectedOutput": 100,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "get_score"
+  },
+  {
+    "id": "bug_py_004",
+    "title": "The Unending Loop",
+    "description": "This function is supposed to sum all even numbers up to n. It runs perfectly, except it never stops.",
+    "difficulty": "Easy",
+    "category": "loops",
+    "language": "Python",
+    "tags": ["infinite-loop", "while"],
+    "xp": 10,
+    "starterCode": "def sum_evens(n):\n    total = 0\n    i = 0\n    while i <= n:\n        if i % 2 == 0:\n            total += i\n        continue\n    return total",
+    "expectedBehavior": "The loop should terminate and return the sum of even numbers.",
+    "hints": [
+      "Trace the value of 'i' as the loop progresses.",
+      "The 'continue' statement skips the rest of the loop body and starts the next iteration immediately.",
+      "You need to increment 'i' by 1 inside the loop, and remove the 'continue'."
+    ],
+    "testCases": [
+      {
+        "input": [4],
+        "expectedOutput": 6,
+        "hidden": false
+      },
+      {
+        "input": [10],
+        "expectedOutput": 30,
+        "hidden": false
+      },
+      {
+        "input": [0],
+        "expectedOutput": 0,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "sum_evens"
+  },
+  {
+    "id": "bug_py_005",
+    "title": "Shrinking Target",
+    "description": "This code tries to remove all occurrences of the value 0 from a list, but it fails to remove consecutive zeros.",
+    "difficulty": "Easy",
+    "category": "loops",
+    "language": "Python",
+    "tags": ["list", "mutation", "iteration"],
+    "xp": 10,
+    "starterCode": "def remove_zeros(data):\n    for item in data:\n        if item == 0:\n            data.remove(item)\n    return data",
+    "expectedBehavior": "Return a list with all zeros removed.",
+    "hints": [
+      "What happens to the indices of a list when you remove an item while iterating over it?",
+      "When you remove an item, the next item shifts left, causing the loop to skip it.",
+      "Try building a new list with non-zero elements instead, or iterate backwards."
+    ],
+    "testCases": [
+      {
+        "input": [[1, 0, 2, 0, 3]],
+        "expectedOutput": [1, 2, 3],
+        "hidden": false
+      },
+      {
+        "input": [[0, 0, 0]],
+        "expectedOutput": [],
+        "hidden": false
+      },
+      {
+        "input": [[0, 1, 0, 0, 5]],
+        "expectedOutput": [1, 5],
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "remove_zeros"
+  },
+  {
+    "id": "bug_py_006_v2",
+    "title": "Floating Downwards",
+    "description": "This function is designed to count how many times you can halve a number before it hits 0 using integer division. It runs infinitely.",
+    "difficulty": "Medium",
+    "category": "loops",
+    "language": "Python",
+    "tags": ["math", "division", "while"],
+    "xp": 20,
+    "starterCode": "def halve_count(n):\n    count = 0\n    while n > 0:\n        n = n / 2\n        count += 1\n    return count",
+    "expectedBehavior": "Use integer division to halve the number so it eventually reaches 0 and terminates.",
+    "hints": [
+      "In Python 3, the '/' operator performs true float division, not integer division.",
+      "A float divided by 2 will get infinitesimally smaller but will take extremely long to reach exactly 0.",
+      "Use the integer division operator '//' instead of '/'."
+    ],
+    "testCases": [
+      {
+        "input": [10],
+        "expectedOutput": 4,
+        "hidden": false
+      },
+      {
+        "input": [1],
+        "expectedOutput": 1,
+        "hidden": false
+      },
+      {
+        "input": [100],
+        "expectedOutput": 7,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "halve_count"
+  },
+  {
+    "id": "bug_py_007_v2",
+    "title": "Impossible Bounds",
+    "description": "This function is supposed to check if a temperature is within a comfortable range (between 20 and 25 degrees). It never returns True.",
+    "difficulty": "Easy",
+    "category": "conditions",
+    "language": "Python",
+    "tags": ["boolean", "logic", "if-else"],
+    "xp": 10,
+    "starterCode": "def is_comfortable(temp):\n    if temp > 20 and temp < 15:\n        return True\n    return False",
+    "expectedBehavior": "Return True if temp is greater than 20 AND less than 25.",
+    "hints": [
+      "Read the logical condition very carefully.",
+      "Can a number be simultaneously greater than 20 AND less than 15?",
+      "Change the upper bound from 15 to 25."
+    ],
+    "testCases": [
+      {
+        "input": [22],
+        "expectedOutput": true,
+        "hidden": false
+      },
+      {
+        "input": [18],
+        "expectedOutput": false,
+        "hidden": false
+      },
+      {
+        "input": [30],
+        "expectedOutput": false,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "is_comfortable"
+  },
+  {
+    "id": "bug_py_008_v2",
+    "title": "Wrong Operator",
+    "description": "This function returns True if a user is valid. A user is valid if they have a username OR an email. The logic is too strict.",
+    "difficulty": "Easy",
+    "category": "conditions",
+    "language": "Python",
+    "tags": ["boolean", "and-or"],
+    "xp": 10,
+    "starterCode": "def is_valid_user(username, email):\n    if username != '' and email != '':\n        return True\n    return False",
+    "expectedBehavior": "Return True if either the username or the email is not empty.",
+    "hints": [
+      "The 'and' operator requires both conditions to be true.",
+      "The requirement states the user needs a username OR an email.",
+      "Replace 'and' with 'or'."
+    ],
+    "testCases": [
+      {
+        "input": ["alice", ""],
+        "expectedOutput": true,
+        "hidden": false
+      },
+      {
+        "input": ["", ""],
+        "expectedOutput": false,
+        "hidden": false
+      },
+      {
+        "input": ["", "bob@example.com"],
+        "expectedOutput": true,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "is_valid_user"
+  },
+  {
+    "id": "bug_py_009",
+    "title": "Overlapping Grades",
+    "description": "This function converts a numerical score to a letter grade. However, anyone scoring over 90 is incorrectly getting a 'B'.",
+    "difficulty": "Medium",
+    "category": "conditions",
+    "language": "Python",
+    "tags": ["if-elif", "ordering"],
+    "xp": 20,
+    "starterCode": "def get_grade(score):\n    if score > 80:\n        return 'B'\n    elif score > 90:\n        return 'A'\n    elif score > 70:\n        return 'C'\n    return 'F'",
+    "expectedBehavior": "Scores > 90 should be 'A', > 80 should be 'B', > 70 should be 'C'. Order matters.",
+    "hints": [
+      "In an if-elif chain, Python executes the first condition that evaluates to True.",
+      "If a score is 95, is it greater than 80? Yes, so it returns 'B' and stops checking.",
+      "Reorder the conditions from highest to lowest."
+    ],
+    "testCases": [
+      {
+        "input": [95],
+        "expectedOutput": "A",
+        "hidden": false
+      },
+      {
+        "input": [85],
+        "expectedOutput": "B",
+        "hidden": false
+      },
+      {
+        "input": [75],
+        "expectedOutput": "C",
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "get_grade"
+  },
+  {
+    "id": "bug_py_010_v2",
+    "title": "The Silent Exit",
+    "description": "This function multiplies a number by 10 and prints it, but when assigned to a variable, it results in null.",
+    "difficulty": "Easy",
+    "category": "functions",
+    "language": "Python",
+    "tags": ["return", "none"],
+    "xp": 10,
+    "starterCode": "def multiply_by_ten(val):\n    result = val * 10\n    print(result)",
+    "expectedBehavior": "The function must return the calculated value, not just print it.",
+    "hints": [
+      "Printing a value shows it on the screen, but it does not give the value back to the caller.",
+      "If a Python function lacks a return statement, it implicitly returns null.",
+      "Replace 'print' with 'return'."
+    ],
+    "testCases": [
+      {
+        "input": [5],
+        "expectedOutput": 50,
+        "hidden": false
+      },
+      {
+        "input": [12],
+        "expectedOutput": 120,
+        "hidden": false
+      },
+      {
+        "input": [-3],
+        "expectedOutput": -30,
+        "hidden": true
+      }
+    ],
+    "status": "published",
+    "entryFunction": "multiply_by_ten"
+  }
+]

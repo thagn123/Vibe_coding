@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Public and private user profile data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "email": { "type": "string" },
+        "experience": { "type": "integer" },
+        "level": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Challenge": {
+      "title": "Bug Finding Challenge",
+      "description": "A coding challenge where users find and fix bugs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "difficulty": { "enum": ["Easy", "Medium", "Hard"] },
+        "language": { "type": "string" },
+        "buggyCode": { "type": "string" },
+        "solution": { "type": "string" },
+        "testCases": { "type": "string" },
+        "points": { "type": "integer" }
+      },
+      "required": ["id", "title", "buggyCode", "solution"]
+    },
+    "UserChallengeProgress": {
+      "title": "User Challenge Progress",
+      "description": "Tracks a user's progress on a specific challenge",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "challengeId": { "type": "string" },
+        "status": { "enum": ["not_started", "in_progress", "completed"] },
+        "attempts": { "type": "integer" },
+        "lastCode": { "type": "string" },
+        "completedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "PromptLab": {
+      "title": "Prompt Engineering Lab",
+      "description": "User created prompt experiments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "basePrompt": { "type": "string" },
+        "refinedPrompt": { "type": "string" },
+        "output": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile documents"
+    },
+    "/challenges/{challengeId}": {
+      "schema": "Challenge",
+      "description": "Global challenge definitions"
+    },
+    "/users/{userId}/progress/{challengeId}": {
+      "schema": "UserChallengeProgress",
+      "description": "User success/attempts on challenges"
+    },
+    "/users/{userId}/prompts/{promptId}": {
+      "schema": "PromptLab",
+      "description": "User's saved prompt engineering tasks"
+    }
+  }
+}

@@ -1,0 +1,131 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Validation Helpers ---
+
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() <= 128 &&
+             data.email is string && data.email.size() <= 256 &&
+             (data.get('displayName', null) == null || (data.displayName is string && data.displayName.size() <= 128)) &&
+             (data.get('photoURL', null) == null || (data.photoURL is string && data.photoURL.size() <= 512)) &&
+             data.experience is int && data.experience >= 0 &&
+             data.level is int && data.level >= 1;
+    }
+
+    function isValidChallenge(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 256 &&
+             data.description is string && data.description.size() <= 2000 &&
+             data.difficulty in ['Easy', 'Medium', 'Hard'] &&
+             data.language is string && data.language.size() <= 64 &&
+             data.buggyCode is string && data.buggyCode.size() <= 10000 &&
+             data.solution is string && data.solution.size() <= 10000 &&
+             data.points is int && data.points >= 0;
+    }
+
+    function isValidProgress(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.challengeId is string && data.challengeId.size() <= 128 &&
+             data.status in ['not_started', 'in_progress', 'completed'] &&
+             data.attempts is int && data.attempts >= 0 &&
+             data.lastCode is string && data.lastCode.size() <= 10000;
+    }
+
+    function isValidPrompt(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.title is string && data.title.size() <= 256 &&
+             data.basePrompt is string && data.basePrompt.size() <= 5000 &&
+             data.refinedPrompt is string && data.refinedPrompt.size() <= 10000 &&
+             data.output is string && data.output.size() <= 20000;
+    }
+
+    // --- Collection Rules ---
+
+    match /users/{userId} {
+      allow get: if isSignedIn(); // Basic profile check
+      allow list: if false; // No blanket user listing
+      
+      allow create: if isOwner(userId) && 
+                      isValidUser(incoming()) && 
+                      incoming().uid == userId &&
+                      incoming().createdAt == request.time;
+      
+      allow update: if isOwner(userId) && 
+                      isValidUser(incoming()) &&
+                      incoming().uid == userId &&
+                      incoming().createdAt == existing().createdAt &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'experience', 'level']);
+    }
+
+    match /challenges/{challengeId} {
+      allow read: if true;
+      allow write: if false; // Admin only (managed via Console)
+    }
+
+    match /users/{userId}/progress/{challengeId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      
+      allow create: if isOwner(userId) && 
+                      isValidId(challengeId) &&
+                      isValidProgress(incoming()) &&
+                      incoming().userId == userId &&
+                      incoming().challengeId == challengeId &&
+                      exists(/databases/$(database)/documents/challenges/$(challengeId));
+                      
+      allow update: if isOwner(userId) && 
+                      isValidProgress(incoming()) &&
+                      incoming().userId == userId &&
+                      incoming().challengeId == challengeId &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['status', 'attempts', 'lastCode', 'completedAt']);
+    }
+
+    match /users/{userId}/prompts/{promptId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      
+      allow create: if isOwner(userId) && 
+                      isValidId(promptId) &&
+                      isValidPrompt(incoming()) &&
+                      incoming().userId == userId &&
+                      incoming().id == promptId &&
+                      incoming().createdAt == request.time;
+
+      allow update: if isOwner(userId) && 
+                      isValidPrompt(incoming()) &&
+                      incoming().userId == userId &&
+                      incoming().id == promptId &&
+                      incoming().createdAt == existing().createdAt &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['title', 'basePrompt', 'refinedPrompt', 'output']);
+      
+      allow delete: if isOwner(userId);
+    }
+  }
+}
